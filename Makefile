@@ -4,11 +4,10 @@
 
 all: nn
 
-nn: nn.c nn.h
-  make -C ../gcollect/ gcd
-  gcc -O0 -g -DDEBUG ../gcollect/gcd.o -o nn.exe  nn.c
+nn: nn.c
+	gcc -g -DDEBUG -lm -O -o nn.exe  nn.c
 
 
 clean:
-  rm -f -nn.exe
+	rm -f -nn.exe
 
