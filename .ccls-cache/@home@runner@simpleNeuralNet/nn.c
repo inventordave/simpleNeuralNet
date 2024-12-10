@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 
 #define DEVMODE
 
@@ -33,34 +34,38 @@ signed init( unsigned base, unsigned depth	)	{
 		for( x; x>0; x-- )	{
 
 			uint32_t* val = (uint32_t*)malloc( sizeof( uint32_t) );
-			*val = y*x;
-			*(NN + (y*x) ) = &val;
+			*val = (uint32_t)y * (uint32_t)x;
+			
+			//*(NN + (y*x) ) = val;
+			*NN[y][x] = *val;
 		}
 	}
 
-	#ifdef DEVMODE
-		int z=0;
+	assert( x==0 );
+	assert( y==0 );
 	
-		while( 1 )	{
+	int z=0;
+	while( 1 )	{
 
-			while( (y++)<depth )	{
+		while( y<depth )	{
+			
+			printf( "[%d]:", (int)y );
+			
+			while( x<base )	{
 				
-				printf( "[%d]:", (int)y );
-				
-				while( (x++)<base )	{
-					
-					printf( " %d: %d,", base-x, (int)*(NN[y][x]) );
-					z++;
-				}
-				x=0;
-				printf( "\n\n" );
+				printf( " %d: %d,", base-x, (int)*(NN[x][y]) );
+				x++;
+				z++;
 			}
-
-			printf( "Should have printed %d entries. Printed %d nodes.\n", numNodes, z );
-
-			break;
+			x=0;
+			y++;
+			printf( "\n\n" );
 		}
-	#endif
+
+		printf( "Should have printed %d entries. Printed %d nodes.\n", numNodes, z );
+
+		break;
+	}
 
 	return z - numNodes;
 }
