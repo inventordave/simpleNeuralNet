@@ -30,6 +30,9 @@ char* getstring( char* _ )	{
 	return s;
 }
 
+// numSibs := 2^y
+// 1/2 start with 1, 1/2 start with 2
+// 2 are 1-based, then 2 2-based, then ...
 
 int main( int argc, char** argv )	{
 
@@ -38,23 +41,82 @@ int main( int argc, char** argv )	{
 	return 0;
 }
 
-signed init( unsigned base, unsigned depth	)	{
+signed init( int base, int depth	)	{
 
 	// Build NN Tree.
+	int test = 16 + 8 + 4 + 2 + 1;
+	
+	int d = depth;
+	
+	int numNodes = 0;
 
-	int numNodes = pow(base,depth);
+	while( d>=0 )
+		numNodes += (int)pow( base, d--);
+	
 	
 	NN = (int*) malloc( sizeof(int) * numNodes + 1  );
 
-	int x = 1;
-	int y = 1;
-	int z;
-	char* _1 = (char*) calloc( 1, sizeof(char) * depth + 1 );
-	char* _2 = (char*) calloc( 1, sizeof(char) * depth + 1 );
-
-	char* strArray[ numNodes ];
-	
+	char* strArray[ numNodes ];	
 	strArray[ 0 ] = "0";
+
+	char* t1 = (char*) calloc( 1, sizeof(char) * numNodes + 1 );
+	char* t2 = (char*) calloc( 1, sizeof(char) * numNodes + 1 );
+	char* lhs_1 = (char*) calloc( 1,2 );
+	//lhs_1[0] = '1';
+	char* rhs_1 = (char*) calloc( 1,2 );
+	//rhs_1[0] = '1';
+	char* lhs_2 = (char*) calloc( 1,2 );
+	//lhs_2[0] = '2';
+	char* rhs_2 = (char*) calloc( 1,2 );
+	//rhs_2[0] = '2';
+
+	
+	int flag = 0;
+	int i = 1;
+
+	for( int j=0; j<numNodes; j++ )	{
+
+		if( !flag )	{
+
+			flag = 1;
+
+			strcpy( t1, lhs_1 );
+			strcat( t1, "1" );
+			strArray[ i++ ] = getstring( t1 );
+			lhs_1 = getstring( t1 );
+
+			strcpy( t1, rhs_1 );
+			strcat( t1, "2" );
+			strArray[ i++ ] = getstring( t1 );
+			rhs_1 = getstring( t1 );
+			
+		}
+		else	{
+			
+			flag = 0;
+
+			strcpy( t2, lhs_2 );
+			strcat( t2, "2" );
+			strArray[ i++ ] = getstring( t2 );
+			lhs_2 = getstring( t2 );
+
+			strcpy( t2, rhs_2 );
+			strcat( t2, "1" );
+			strArray[ i++ ] = getstring( t2 );
+			rhs_2 = getstring( t1 );
+
+		}
+	}
+
+	for( i=0; i<numNodes; i++ )	{
+		
+		printf( "%d:\t%s\n", i, strArray[i] );
+		fflush( stdout );
+	}
+	
+	
+	return i;
+}
 
 /** 
 	// 1. if increment [offset] is n % 2 == 1, last digit is 1
@@ -68,70 +130,5 @@ signed init( unsigned base, unsigned depth	)	{
 	// 4. if current node is lhs, it's lowest-order digit is 1.
 	// 5. if current node is rhs, it's lowest-order digit is 2.
 */
-	
-	int flag = 0;
-	int i = 1;
-	while( y <= depth )	{
-
-		// numSibs := 2^y
-		// 1/2 start with 1, 1/2 start with 2
-		// 2 are 1-based, then 2 2-based, then ...
-
-		char* t1;
-		char* t2;
-		char* lhs_1 = (char*) calloc( 1,2 );
-		lhs_1[0] = '1';
-		char* rhs_1 = (char*) calloc( 1,2 );
-		rhs_1[0] = '1';
-		char* lhs_2 = (char*) calloc( 1,2 );
-		lhs_2[0] = '2';
-		char* rhs_2 = (char*) calloc( 1,2 );
-		rhs_2[0] = '2';
-		
-		for( int j=0; j< pow(2, y ); j++ )	{
-
-			if( !flag )	{
-
-				flag = 1;
-
-				strcpy( t1, lhs_1 ); free( lhs_1 );
-				strcat( t1, "1" );
-				strArray[ i++ ] = getstring( t1 );
-				lhs_1 = getstring( t1 );
-
-				strcpy( t1, rhs_1 ); free( rhs_1 );
-				strcat( t1, "2" );
-				strArray[ i++ ] = getstring( t1 );
-				rhs_1 = getstring( t1 );
-				
-			}
-			else	{
-				
-				flag = 0;
-
-				strcpy( t2, lhs_2 ); free( lhs_2 );
-				strcat( t2, "1" );
-				strArray[ i++ ] = getstring( t2 );
-				lhs_2 = getstring( t2 );
-
-				strcpy( t2, rhs_2 ); free( rhs_2 );
-				strcat( t2, "2" );
-				strArray[ i++ ] = getstring( t2 );
-				rhs_2 = getstring( t1 );
-
-			}
-		}
-			//loop( base(x), exp(y)	) // until exp(y) > depth
-	}
-
-	for( i=0; i<numNodes; i++ )	{
-		
-		printf( "%d:\t%s\n", i, strArray[i] );
-		fflush( stdout );
-	}
-	
-	
-	return numNodes - z;
-}
 
 // end_of_file
