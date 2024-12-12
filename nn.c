@@ -1,14 +1,16 @@
 // NEURAL_NET_C
 
 #include <stdlib.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
 
 #define DEVMODE
 
-static uint32_t *** NN;
+#define NN_Ref *(NN+(x*y))
+
+static int * NN;
+
 signed init( unsigned base, unsigned depth	);
 
 int main( int argc, char** argv )	{
@@ -24,36 +26,30 @@ signed init( unsigned base, unsigned depth	)	{
 
 	int numNodes = pow(base,depth);
 	
-	NN = (uint32_t***) malloc( sizeof(uint32_t) * numNodes  );
+	NN = (int*) malloc( sizeof(int) * numNodes  );
 
-	uint32_t x = base;
-	uint32_t y = depth;
+	int x = base;
+	int y = depth;
 
 	for( y; y>0; y-- )	{
 
 		for( x; x>0; x-- )	{
 
-			uint32_t* val = (uint32_t*)malloc( sizeof( uint32_t) );
-			*val = (uint32_t)y * (uint32_t)x;
-			
-			//*(NN + (y*x) ) = val;
-			*NN[y][x] = *val;
+			int val = y * x;
+			NN_Ref = val;
 		}
 	}
 
-	assert( x==0 );
-	assert( y==0 );
-	
 	int z=0;
 	while( 1 )	{
 
 		while( y<depth )	{
 			
-			printf( "[%d]:", (int)y );
+			printf( "[%d]\n\n", y );
 			
 			while( x<base )	{
 				
-				printf( " %d: %d,", base-x, (int)*(NN[x][y]) );
+				printf( "%d: %d,", base-x, NN_Ref );
 				x++;
 				z++;
 			}
@@ -67,9 +63,7 @@ signed init( unsigned base, unsigned depth	)	{
 		break;
 	}
 
-	return z - numNodes;
+	return numNodes - z;
 }
-
-
 
 // end_of_file
