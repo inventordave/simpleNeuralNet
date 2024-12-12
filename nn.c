@@ -120,6 +120,7 @@ signed init( unsigned base, unsigned depth	)	{
 				rhs_2 = getstring( t1 );
 
 			}
+		}
 			//loop( base(x), exp(y)	) // until exp(y) > depth
 	}
 
